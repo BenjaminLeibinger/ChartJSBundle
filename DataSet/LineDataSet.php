@@ -2,191 +2,142 @@
 
 namespace Avegao\ChartjsBundle\DataSet;
 
+use Avegao\ChartjsBundle\Model\DataSetInterface;
+
 /**
- * Class LinearDataSet
+ * Class LineDataSet
  *
- * @author Alvaro de la Vega Olmedilla <alvarodlvo@gmail.com>
- *
- * @see http://www.chartjs.org/docs/#line-chart-data-structure
+ * @author Benjamin Leibinger
  */
-class LinearDataSet implements DataSetInterface
+class LineDataSet extends BaseDataSet
 {
-    /**
-     * @var array The data to plot in a line
-     */
-    private $data;
-    
-    /**
-     * @var string 	The label for the dataset which appears in the legend and tooltips
-     */
-    private $label;
+    protected $currentColorKey = 0;
 
     /**
      * @var string The ID of the x axis to plot this dataset on
      */
-    private $xAxisID;
+    protected $xAxisID;
 
     /**
      * @var string The ID of the y axis to plot this dataset on
      */
-    private $yAxisID;
+    protected $yAxisID;
 
     /**
      * @var bool If true, fill the area under the line
      */
-    private $fill;
+    protected $fill = false;
 
     /**
      * @var int Bezier curve tension of the line. Set to 0 to draw straightlines.
      *          Note This was renamed from 'tension' but the old name still works.
      */
-    private $lineTension;
-
-    /**
-     * @var string The fill color under the line
-     *
-     * @see http://www.chartjs.org/docs/#colors
-     */
-    private $backgroundColor;
+    protected $lineTension;
 
     /**
      * @var int The width of the line in pixels
      */
-    private $borderWidth;
+    protected $borderWidth;
 
     /**
      * @var string The color of the line.
      *
      * @see http://www.chartjs.org/docs/#colors
      */
-    private $borderColor;
+    protected $borderColor;
 
     /**
      * @var string Cap style of the line
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap
      */
-    private $borderCapStyle;
+    protected $borderCapStyle;
 
     /**
      * @var array Length and spacing of dashes
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash
      */
-    private $borderDash;
+    protected $borderDash;
 
     /**
      * @var int Offset for line dashes
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineDashOffset
      */
-    private $borderDashOffset;
+    protected $borderDashOffset;
 
     /**
      * @var string Line joint style
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin
      */
-    private $borderJoinStyle;
+    protected $borderJoinStyle;
 
     /**
      * @var string|array The border color for points.
      */
-    private $pointBorderColor;
+    protected $pointBorderColor;
 
     /**
      * @var string|array The fill color for points
      */
-    private $pointBackgrounColor;
+    protected $pointBackgrounColor;
 
     /**
      * @var int|array The width of the point border in pixels
      */
-    private $pointBorderWidth;
+    protected $pointBorderWidth;
 
     /**
      * @var int|array The radius of the point shape. If set to 0, nothing is rendered.
      */
-    private $pointHoverRadius;
+    protected $pointHoverRadius;
 
     /**
      * @var int|array The pixel size of the non-displayed point that reacts to mouse events
      */
-    private $pointHitRadius;
+    protected $pointHitRadius;
 
     /**
      * @var string|array Point background color when hovered
      */
-    private $pointHoverBackgroundColor;
+    protected $pointHoverBackgroundColor;
 
     /**
      * @var string|array Point border color when hovered
      */
-    private $pointHoverBorderColor;
+    protected $pointHoverBorderColor;
     /**
      * @var int|array Border width of point when hovered
      */
-    private $pointHoverBorderWidth;
+    protected $pointHoverBorderWidth;
 
     /**
      * @var string|array The style of point. Options include 'circle', 'triangle', 'rect', 'rectRot', 'cross',
      *                   'crossRot', 'star', 'line', and 'dash'
      */
-    private $pointStyle;
-
-//    /**
-//     * LinearDataSet constructor.
-//     * @param string $label
-//     * @param string $fillColor
-//     * @param string $strokeColor
-//     * @param string $pointColor
-//     * @param string $pointStrokeColor
-//     * @param string $pointHighlightFill
-//     * @param string $pointHighlightStroke
-//     * @param array $data
-//     */
-//    public function __construct(
-//        $label                = 'Label',
-//        $fillColor            = 'rgba(220,220,220,0.2)',
-//        $strokeColor          = 'rgba(220,220,220,1)',
-//        $pointColor           = 'rgba(220,220,220,1)',
-//        $pointStrokeColor     = '#FFF',
-//        $pointHighlightFill   = '#FFF',
-//        $pointHighlightStroke = 'rgba(220,220,220,1)',
-//        array $data           = []
-//    )
-//    {
-//        $this->label                = $label;
-//        $this->fillColor            = $fillColor;
-//        $this->strokeColor          = $strokeColor;
-//        $this->pointColor           = $pointColor;
-//        $this->pointStrokeColor     = $pointStrokeColor;
-//        $this->pointHighlightFill   = $pointHighlightFill;
-//        $this->pointHighlightStroke = $pointHighlightStroke;
-//        $this->data                 = $data;
-//    }
+    protected $pointStyle;
 
     /**
-     * @return array
+     * BarDataSet constructor.
+     * @param int $color
      */
-    public function getData()
+    public function __construct($color = null)
     {
-        return $this->data;
+        if(is_null($color)){
+            $this->backgroundColor = $this->getRandomColor();
+            $this->borderColor = $this->backgroundColor;
+        }else{
+            $this->backgroundColor = $color;
+            $this->borderColor = $color;
+        }
     }
 
-    /**
-     * @param array $data
-     * @return LinearDataSet
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-        return $this;
-    }
 
     /**
      * @param mixed $data
-     * @return LinearDataSet
+     * @return DataSetInterface
      */
     public function addData($data)
     {
@@ -194,23 +145,6 @@ class LinearDataSet implements DataSetInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
-     * @return LinearDataSet
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
-        return $this;
-    }
 
     /**
      * @return string
@@ -222,7 +156,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param string $xAxisID
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setXAxisID($xAxisID)
     {
@@ -240,7 +174,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param string $yAxisID
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setYAxisID($yAxisID)
     {
@@ -258,7 +192,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param boolean $fill
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setFill($fill)
     {
@@ -276,29 +210,11 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param int $lineTension
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setLineTension($lineTension)
     {
         $this->lineTension = $lineTension;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBackgroundColor()
-    {
-        return $this->backgroundColor;
-    }
-
-    /**
-     * @param string $backgroundColor
-     * @return LinearDataSet
-     */
-    public function setBackgroundColor($backgroundColor)
-    {
-        $this->backgroundColor = $backgroundColor;
         return $this;
     }
 
@@ -312,7 +228,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param int $borderWidth
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setBorderWidth($borderWidth)
     {
@@ -330,7 +246,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param string $borderColor
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setBorderColor($borderColor)
     {
@@ -348,7 +264,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param string $borderCapStyle
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setBorderCapStyle($borderCapStyle)
     {
@@ -366,7 +282,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array $borderDash
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setBorderDash($borderDash)
     {
@@ -384,7 +300,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param int $borderDashOffset
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setBorderDashOffset($borderDashOffset)
     {
@@ -402,7 +318,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param string $borderJoinStyle
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setBorderJoinStyle($borderJoinStyle)
     {
@@ -420,7 +336,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|string $pointBorderColor
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointBorderColor($pointBorderColor)
     {
@@ -438,7 +354,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|string $pointBackgrounColor
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointBackgrounColor($pointBackgrounColor)
     {
@@ -456,7 +372,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|int $pointBorderWidth
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointBorderWidth($pointBorderWidth)
     {
@@ -474,7 +390,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|int $pointHoverRadius
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointHoverRadius($pointHoverRadius)
     {
@@ -492,7 +408,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|int $pointHitRadius
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointHitRadius($pointHitRadius)
     {
@@ -510,7 +426,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|string $pointHoverBackgroundColor
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointHoverBackgroundColor($pointHoverBackgroundColor)
     {
@@ -528,7 +444,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|string $pointHoverBorderColor
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointHoverBorderColor($pointHoverBorderColor)
     {
@@ -546,7 +462,7 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|int $pointHoverBorderWidth
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointHoverBorderWidth($pointHoverBorderWidth)
     {
@@ -564,29 +480,11 @@ class LinearDataSet implements DataSetInterface
 
     /**
      * @param array|string $pointStyle
-     * @return LinearDataSet
+     * @return LineDataSet
      */
     public function setPointStyle($pointStyle)
     {
         $this->pointStyle = $pointStyle;
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        $vars = get_object_vars($this);
-
-        $array = [];
-
-        foreach ($vars as $index => $var) {
-            if (!is_null($var)) {
-                $array[$index] = $var;
-            }
-        }
-
-        return $array;
     }
 }

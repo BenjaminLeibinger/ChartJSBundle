@@ -1,6 +1,6 @@
 <?php
 
-namespace Avegao\ChartjsBundle\DataSet;
+namespace Avegao\ChartjsBundle\Exception;
 
 class DataSetException extends \Exception
 {

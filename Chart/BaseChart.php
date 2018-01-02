@@ -2,11 +2,15 @@
 
 namespace Avegao\ChartjsBundle\Chart;
 
-use Avegao\ChartjsBundle\DataSet\DataSetException;
-use Avegao\ChartjsBundle\DataSet\DataSetInterface;
-use Avegao\ChartjsBundle\DataSet\LinearDataSet;
+use Avegao\ChartjsBundle\Model\DataSetInterface;
+use Avegao\ChartjsBundle\Model\ChartInterface;
 
-class LinearChart implements ChartInterface
+/**
+ * Class BaseChart
+ *
+ * @author Benjamin Leibinger
+ */
+abstract class BaseChart implements ChartInterface
 {
     /** @var string */
     private $id;
@@ -14,7 +18,7 @@ class LinearChart implements ChartInterface
     /** @var array */
     private $labels;
 
-    /** @var LinearDataSet[] */
+    /** @var DataSetInterface[] */
     private $dataSets;
 
     /** @var array */
@@ -24,11 +28,13 @@ class LinearChart implements ChartInterface
     private $options;
 
     /**
+     * @param String $id
+     *
      * LinearChart constructor.
      */
-    public function __construct()
+    public function __construct($id = null)
     {
-        $this->id     = 'chart'.mt_rand(0, 4096);
+        $this->id     =  !is_null($id) ? $id : mt_rand(0, 4096);
         $this->labels = [];
     }
 
@@ -48,15 +54,6 @@ class LinearChart implements ChartInterface
         $this->id = $id;
         return $this;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getType()
-    {
-        return 'line';
-    }
-
 
     /**
      * @inheritDoc
@@ -155,10 +152,6 @@ class LinearChart implements ChartInterface
         ];
 
         foreach ($this->getDataSets() as $dataSet) {
-            if (!$dataSet instanceof LinearDataSet) {
-                throw new DataSetException('DataSet must be an instance of LinearDataSet, '.get_class($dataSet).' given');
-            }
-
             if (!empty($dataSet->getData())) {
                 $data['datasets'][] = $dataSet->toArray();
             }

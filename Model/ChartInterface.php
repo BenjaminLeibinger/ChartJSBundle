@@ -1,8 +1,8 @@
 <?php
 
-namespace Avegao\ChartjsBundle\Chart;
+namespace Avegao\ChartjsBundle\Model;
 
-use Avegao\ChartjsBundle\DataSet\DataSetInterface;
+use Avegao\ChartjsBundle\Model\DataSetInterface;
 
 interface ChartInterface
 {
