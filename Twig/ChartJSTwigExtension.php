@@ -2,64 +2,63 @@
 
 namespace Avegao\ChartjsBundle\Twig;
 
-use Avegao\ChartjsBundle\Chart\ChartInterface;
-use Avegao\ChartjsBundle\Chart\LinearChart;
+use Avegao\ChartjsBundle\Model\ChartInterface;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 
 class ChartJSTwigExtension extends \Twig_Extension
 {
-    /**
-     * @inheritDoc
-     */
-    public function getName()
-    {
-        return 'chartjs_twig_extension';
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public function getName()
+	{
+		return 'chartjs_twig_extension';
+	}
 
-    /**
-     * @inheritDoc
-     */
-    public function getFunctions()
-    {
-        return [
-            new \Twig_SimpleFunction('chartjs_render_html', [$this, 'renderHTML'], ['is_safe' => ['html'], 'needs_environment' => false]),
-            new \Twig_SimpleFunction('chartjs_render_js', [$this, 'renderJS'], ['is_safe' => ['html'], 'needs_environment' => false]),
-        ];
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public function getFunctions()
+	{
+		return [
+			new \Twig_SimpleFunction('chartjs_render_html', [$this, 'renderHTML'], ['is_safe' => ['html'], 'needs_environment' => false]),
+			new \Twig_SimpleFunction('chartjs_render_js', [$this, 'renderJS'], ['is_safe' => ['html'], 'needs_environment' => false]),
+		];
+	}
 
 
-    /**
-     * @param ChartInterface $chart
-     * @param int $width
-     * @param int $height
-     * @return string
-     */
-    public function renderHTML(ChartInterface $chart, $width = 400, $height = 400)
-    {
-        return '<canvas id="'.$chart->getId().'" width="'.$width.'" height="'.$height.'"></canvas>';
-    }
+	/**
+	 * @param ChartInterface $chart
+	 * @param int $width
+	 * @param int $height
+	 * @return string
+	 */
+	public function renderHTML(ChartInterface $chart, $height = 400, $width = 400)
+	{
+		return '<canvas id="chart_'.$chart->getId().'" width="'.$width.'" height="'.$height.'"></canvas>';
+	}
 
-    /**
-     * @param ChartInterface $chart
-     * @return string
-     */
-    public function renderJS(ChartInterface $chart)
-    {
-        $js  = 'jQuery(document).ready(function(){';
-        $js .= 'var ctx'.$chart->getId().' = jQuery(\'#'.$chart->getId().'\');';
+	/**
+	 * @param ChartInterface $chart
+	 * @return string
+	 */
+	public function renderJS(ChartInterface $chart)
+	{
+		$js  = 'jQuery(document).ready(function(){'."\n";
+		$js .= "\t\t\t".'var ctx_'.$chart->getId().' = jQuery(\'#chart_'.$chart->getId().'\');'."\n";
 
-        $js .= 'var chart'.$chart->getId().' = new Chart(ctx'.$chart->getId().', {';
-        $js .= '"type": "'.$chart->getType().'",';
-        $js .= '"data": '.json_encode($chart->getData());
+		$js .= "\t\t\t".'var chart_'.$chart->getId().' = new Chart(ctx_'.$chart->getId().', {'."\n";
+		$js .= "\t\t\t\t".'"type": "'.$chart->getType().'",'."\n";
+		$js .= "\t\t\t\t".'"data": '.json_encode($chart->getData())."\n";
 
-        if (!is_null($chart->getOptions())) {
-            $js .= ',"options": '.json_encode($chart->getOptions()).',';
-        }
+		if (!is_null($chart->getOptions())) {
+			$js .= "\t\t\t\t".',"options": '.json_encode($chart->getOptions()).','."\n";
+		}
 
-        $js .= '});';
+		$js .= "\t\t\t".'});'."\n";
 
-        $js .= '});';
+		$js .= "\t\t".'});';
 
-        return $js;
-    }
+		return $js;
+	}
 }
