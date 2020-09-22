@@ -3,9 +3,10 @@
 namespace Avegao\ChartjsBundle\Twig;
 
 use Avegao\ChartjsBundle\Model\ChartInterface;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class ChartJSTwigExtension extends \Twig_Extension
+class ChartJSTwigExtension extends AbstractExtension
 {
 	/**
 	 * @inheritDoc
@@ -21,8 +22,8 @@ class ChartJSTwigExtension extends \Twig_Extension
 	public function getFunctions()
 	{
 		return [
-			new \Twig_SimpleFunction('chartjs_render_html', [$this, 'renderHTML'], ['is_safe' => ['html'], 'needs_environment' => false]),
-			new \Twig_SimpleFunction('chartjs_render_js', [$this, 'renderJS'], ['is_safe' => ['html'], 'needs_environment' => false]),
+			new TwigFunction('chartjs_render_html', [$this, 'renderHTML'], ['is_safe' => ['html'], 'needs_environment' => false]),
+			new TwigFunction('chartjs_render_js', [$this, 'renderJS'], ['is_safe' => ['html'], 'needs_environment' => false]),
 		];
 	}
 
